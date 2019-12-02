@@ -2,6 +2,7 @@ package com.deydas.infrastructure;
 
 import com.google.common.collect.ImmutableList;
 import software.amazon.awscdk.core.Construct;
+import software.amazon.awscdk.core.Duration;
 import software.amazon.awscdk.core.Stack;
 import software.amazon.awscdk.core.StackProps;
 import software.amazon.awscdk.services.certificatemanager.Certificate;
@@ -69,12 +70,18 @@ public class BlogCdkStack extends Stack {
             .build();
     final ViewerCertificate viewerCertificate = ViewerCertificate.fromAcmCertificate(acmCertificate, viewerCertificateOptions);
 
-    final S3OriginConfig s3OriginConfig = S3OriginConfig.builder()
-            .s3BucketSource(websiteBucket)
+    final CustomOriginConfig customOriginConfig = CustomOriginConfig.builder()
+            .httpPort(80)
+            .httpsPort(443)
+            .domainName("deydas.com-bucket.s3-website-us-east-1.amazonaws.com")
+            .originKeepaliveTimeout(Duration.seconds(5))
+            .originReadTimeout(Duration.seconds(30))
+            .originProtocolPolicy(OriginProtocolPolicy.HTTP_ONLY)
             .build();
+
     final List<Behavior> behaviorList = ImmutableList.of(Behavior.builder().isDefaultBehavior(true).build());
     final SourceConfiguration sourceConfiguration = SourceConfiguration.builder()
-            .s3OriginSource(s3OriginConfig)
+            .customOriginSource(customOriginConfig)
             .behaviors(behaviorList)
             .build();
 

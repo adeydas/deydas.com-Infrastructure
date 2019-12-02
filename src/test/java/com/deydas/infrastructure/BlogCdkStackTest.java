@@ -22,7 +22,6 @@ public class BlogCdkStackTest {
           new ObjectMapper().configure(SerializationFeature.INDENT_OUTPUT, true);
 
   @Test
-  @Ignore
   public void testStack() throws IOException {
     App app = new App();
     Environment envUSA = makeEnv("test-account", "us-east-1");
